@@ -18,10 +18,10 @@ session = DBSession()
 
 
 
-class SNP(Base):
-    __tablename__ = "snp"
+class Variant(Base):
+    __tablename__ = "variant"
     id = Column(Integer, primary_key=True)
-    chrom_position = Column(Integer)
+    position = Column(Integer)
     nucleotide = Column(String)
     gene = Column(String(250))
     chromosome = Column(String(250))
@@ -41,8 +41,8 @@ class Read(Base):
     seq_barcode = Column(String(250))
     run_barcode = Column(Integer)
     quality = Column(Float)
-    snp_id = Column(Integer, ForeignKey("snp.id"))
-    snp = relationship(SNP, backref = "Read")
+    var_id = Column(Integer, ForeignKey("variant.id"))
+    var = relationship(Variant, backref = "Read")
     
 
 class Stats(Base):
@@ -54,8 +54,8 @@ class Stats(Base):
     faf_sd = Column(Float)
     faf_cv = Column(Float)
     num_runs = Column(Integer)
-    snp_id = Column(Integer, ForeignKey("snp.id"))
-    snp = relationship(SNP, backref = "Stats" )
+    var_id = Column(Integer, ForeignKey("variant.id"))
+    var = relationship(Variant, backref = "Stats" )
     
  
     
