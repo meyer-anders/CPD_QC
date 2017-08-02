@@ -12,9 +12,6 @@ To do:
     protect against duplicates
 
 
-
-
-
 """
 import os, sys
 from sqlalchemy import create_engine
@@ -33,7 +30,13 @@ DBSession = sessionmaker(bind=engine)
 session = DBSession()
 
 # Data import
-data = pd.read_excel("validation_full.xlsx")
+original_data = pd.read_excel("validation_full.xlsx")
+ash_data = pd.read_csv("fm.sv2_tsca.clinical_only.multirun.csv")
+robyn_data1 = pd.read_table("CPDV000386.tab")
+robyn_data2 = pd.read_table("CPDV141537.tab")
+robyn_data3 = pd.read_table("CPDV151487.tab")
+robyn_data4 = pd.read_table("CPDV160726.tab")
+
 data.dropna(subset = ['dbsnp'], inplace = True)
 categorization = pd.read_excel("alt_categorization.xlsx")
 data_rows = len(data)

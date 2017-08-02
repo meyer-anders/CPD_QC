@@ -16,18 +16,23 @@ DBSession = sessionmaker(bind=engine)
 session = DBSession()
  
 
-# change to correct dbsnp nonsense
+
+'''
+var_barcode = 
+
+'''
+
 class SNP(Base):
     __tablename__ = "snp"
     id = Column(Integer, primary_key=True)
-    dbsnp = Column(Integer)
+    chrom_position = Column(Integer)
+    nucleotide = column(String)
     gene = Column(String(250))
     chromosome = Column(String(250))
     effect = Column(String(250))
     var_type = Column(String(250))
     categ = Column(String(250))
 
-# add quality score where available.
 class Read(Base):
     __tablename__ = "read"
     id = Column(Integer, primary_key = True)
@@ -37,9 +42,12 @@ class Read(Base):
     faf = Column(Float)
     panel = Column(String(250))
     sample = Column(String(250))
-    run = Column(Integer) # fix to make seq id
+    seq_barcode = Column(String(250))
+    run_barcode = Column(Integer)
+    quality = Column(Float)
     snp_id = Column(Integer, ForeignKey("snp.id"))
     snp = relationship(SNP, backref = "Read")
+    
 
 class Stats(Base):
     __tablename__ = "stats"
