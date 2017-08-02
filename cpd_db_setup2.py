@@ -17,16 +17,12 @@ session = DBSession()
  
 
 
-'''
-var_barcode = 
-
-'''
 
 class SNP(Base):
     __tablename__ = "snp"
     id = Column(Integer, primary_key=True)
     chrom_position = Column(Integer)
-    nucleotide = column(String)
+    nucleotide = Column(String)
     gene = Column(String(250))
     chromosome = Column(String(250))
     effect = Column(String(250))

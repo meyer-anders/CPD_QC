@@ -13,7 +13,6 @@ import pandas as pd
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import relationship, aliased
 from sqlalchemy import create_engine, exists, func
-#from cpd_db_setup2 import SNP, Read, Stats
 
 
 # SQL setup
@@ -25,7 +24,8 @@ session = DBSession()
 # Data import
 original_data = pd.read_excel("validation_full.xlsx")
 ash_data = pd.read_csv("fm.sv2_tsca.clincal_only.multirun.csv")
-robyn_data1 = pd.read_table("CPDV000386.tab")
-robyn_data2 = pd.read_table("CPDV141537.tab")
-robyn_data3 = pd.read_table("CPDV151487.tab")
-robyn_data4 = pd.read_table("CPDV160726.tab")
+CPDV000386 = pd.read_table("CPDV000386.tab")
+CPDV141537 = pd.read_table("CPDV141537.tab")
+CPDV151487 = pd.read_table("CPDV151487.tab")
+CPDV160726 = pd.read_table("CPDV160726.tab")
+heme_data = pd.read_csv("heme pos ctl.csv")
