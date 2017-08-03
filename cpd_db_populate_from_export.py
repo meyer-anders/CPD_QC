@@ -24,7 +24,8 @@ from cpd_db_setup2 import Variant, Read, Stats
 
 
 # SQL setup
-engine = create_engine('sqlite:///cpd2.db')
+#engine = create_engine('sqlite:///cpd2.db')
+engine = create_engine('mysql+pymysql://root@localhost:3306/cpd', echo=False)
 Base = declarative_base(bind=engine)
 DBSession = sessionmaker(bind=engine)
 session = DBSession()

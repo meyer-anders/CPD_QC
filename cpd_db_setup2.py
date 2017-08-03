@@ -9,8 +9,10 @@ from sqlalchemy import create_engine
 from sqlalchemy import Column, Integer, ForeignKey, String, Text, Float
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import sessionmaker, relationship
+import pymysql
 
-engine = create_engine('sqlite:///cpd2.db')
+#engine = create_engine('sqlite:///cpd2.db')
+engine = create_engine('mysql+pymysql://root@localhost:3306/cpd', echo=False)
 Base = declarative_base(bind=engine)
 DBSession = sessionmaker(bind=engine)
 session = DBSession()
@@ -22,7 +24,7 @@ class Variant(Base):
     __tablename__ = "variant"
     id = Column(Integer, primary_key=True)
     position = Column(Integer)
-    nucleotide = Column(String)
+    nucleotide = Column(String(250))
     gene = Column(String(250))
     chromosome = Column(String(250))
     effect = Column(String(250))

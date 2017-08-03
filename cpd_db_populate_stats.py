@@ -6,7 +6,7 @@ Created on Sat Jul  8 11:52:37 2017
 @author: Anders
 """
 
-import os, sys
+
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
 import pandas as pd
@@ -17,7 +17,8 @@ from cpd_db_setup2 import Variant, Read, Stats
 
 # SQL setup
 Base = declarative_base()
-engine = create_engine('sqlite:///cpd2.db')
+#engine = create_engine('sqlite:///cpd2.db')
+engine = create_engine('mysql://root@localhost:3306/mydb', echo=False)
 Base.metadata.bind = engine
 DBSession = sessionmaker(bind=engine)
 session = DBSession()
