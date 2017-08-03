@@ -7,6 +7,8 @@ Created on Sat Jul  8 09:30:08 2017
 
 to do:
     fix sample, seq barcoding
+    add filters
+    
 """
 import os, sys
 from sqlalchemy import create_engine
