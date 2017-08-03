@@ -12,7 +12,7 @@ from sqlalchemy.orm import sessionmaker, relationship
 import pymysql
 
 #engine = create_engine('sqlite:///cpd2.db')
-engine = create_engine('mysql+pymysql://root@localhost:3306/cpd', echo=False)
+engine = create_engine('mysql+pymysql://root@localhost:3306/cpd2', echo=False)
 Base = declarative_base(bind=engine)
 DBSession = sessionmaker(bind=engine)
 session = DBSession()
@@ -23,7 +23,7 @@ session = DBSession()
 class Variant(Base):
     __tablename__ = "variant"
     id = Column(Integer, primary_key=True)
-    position = Column(Integer)
+    position = Column(String(250))
     nucleotide = Column(String(250))
     gene = Column(String(250))
     chromosome = Column(String(250))
@@ -50,7 +50,7 @@ class Stats(Base):
     __tablename__ = "stats"
     id = Column(Integer, primary_key=True)
     panel = Column(String(250))
-    depth_mean = Column(Float)
+    fdp_mean = Column(Float)
     faf_mean = Column(Float)
     faf_sd = Column(Float)
     faf_cv = Column(Float)

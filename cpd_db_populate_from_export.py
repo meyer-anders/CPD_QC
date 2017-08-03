@@ -25,19 +25,19 @@ from cpd_db_setup2 import Variant, Read, Stats
 
 # SQL setup
 #engine = create_engine('sqlite:///cpd2.db')
-engine = create_engine('mysql+pymysql://root@localhost:3306/cpd', echo=False)
+engine = create_engine('mysql+pymysql://root@localhost:3306/cpd2', echo=False)
 Base = declarative_base(bind=engine)
 DBSession = sessionmaker(bind=engine)
 session = DBSession()
 
 
 def add_new_var(data, r):
-    new_var = Variant(position = int(data.Pos.iloc[r]),
-                          nucleotide = data.Alt.iloc[r],
-                          gene = data.Gene_name.iloc[r],
-                          chromosome = data.Chrom_without_chr.iloc[r],
-                          effect = data.Effect.iloc[r],
-                          var_type = data.VariantType.iloc[r])
+    new_var = Variant(position = str(data.Pos.iloc[r]),
+                          nucleotide = str(data.Alt.iloc[r]),
+                          gene = str(data.Gene_name.iloc[r]),
+                          chromosome = str(data.Chrom_without_chr.iloc[r]),
+                          effect = str(data.Effect.iloc[r]),
+                          var_type = str(data.VariantType.iloc[r]))
     q = session.query(Variant).filter(Variant.position == new_var.position,
                                          Variant.nucleotide == new_var.nucleotide,
                                          Variant.chromosome == new_var.chromosome)
@@ -50,16 +50,16 @@ def add_new_read(data,r):
     sample = data["Sample Sequencing Name"].iloc[r]
     split = sample.split("-")
     run_barcode = int(split[-1] + split[-3] + split[-7])
-    q = session.query(Variant).filter(Variant.position == int(data.Pos.iloc[r]),
-                                         Variant.nucleotide == data.Alt.iloc[r],
-                                         Variant.chromosome == data.Chrom_without_chr.iloc[r])
+    q = session.query(Variant).filter(Variant.position == str(data.Pos.iloc[r]),
+                                         Variant.nucleotide == str(data.Alt.iloc[r]),
+                                         Variant.chromosome == str(data.Chrom_without_chr.iloc[r]))
     var = q.first()
     new_read = Read(fdp = int(data.FDP.iloc[r]),
                     fad = int(data.FAD.iloc[r]),
                     var = var,
-                    run = run_barcode,
-                    panel = split[-8],
-                    sample = split[0])
+                    run = str(run_barcode),
+                    panel = str(split[-8]),
+                    sample = str(split[0]))
     new_read.faf = new_read.fad / new_read.fdp 
     q2 = session.query(Read).filter(Read.var == new_read.var,
                                     Read.run == new_read.run,
@@ -75,6 +75,7 @@ def add_new_read(data,r):
 
 def load_data(data):
     data.dropna(subset = ['Pos', 'FDP', 'FAD'], inplace = True)
+    data.fillna(value = '', inplace = True)
     data_rows = len(data)
     for r in range(data_rows):
         add_new_var(data, r)
@@ -84,21 +85,22 @@ def load_data(data):
 
 # Data import
 
-original_data = pd.read_excel("validation_full.xlsx")
+#original_data = pd.read_excel("validation_full.xlsx")
+#CPDV000386 = pd.read_table("CPDV000386.tab")
+#CPDV141537 = pd.read_table("CPDV141537.tab")
+#CPDV151487 = pd.read_table("CPDV151487.tab")
+#CPDV160726 = pd.read_table("CPDV160726.tab")
+#heme_data = pd.read_csv("heme pos ctl.csv")
+
 ash_data = pd.read_csv("fm.sv2_tsca.clincal_only.multirun.csv")
-CPDV000386 = pd.read_table("CPDV000386.tab")
-CPDV141537 = pd.read_table("CPDV141537.tab")
-CPDV151487 = pd.read_table("CPDV151487.tab")
-CPDV160726 = pd.read_table("CPDV160726.tab")
-heme_data = pd.read_csv("heme pos ctl.csv")
 
+#load_data(original_data)
+#load_data(CPDV000386)
+#load_data(CPDV141537)
+#load_data(CPDV151487)
+#load_data(CPDV160726)
+#load_data(heme_data)
 
-load_data(original_data)
 load_data(ash_data)
-load_data(CPDV000386)
-load_data(CPDV141537)
-load_data(CPDV151487)
-load_data(CPDV160726)
-load_data(heme_data)
 
 session.close()
