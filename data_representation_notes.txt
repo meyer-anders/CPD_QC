@@ -1,0 +1,12 @@
+data representation:
+	1. 'tracking' a clinically reported variant
+		- for all samples with a clinically reported variant
+			- make list of clinically reported variants
+			- split out by panel?
+			- for each variant
+				- for each run
+					- plot as a series
+					
+	2. concordance between panels
+		- for each variant seen on multiple panels
+			- 

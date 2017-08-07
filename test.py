@@ -1,9 +1,20 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 """
-Created on Wed Aug  2 14:47:02 2017
+Created on Mon Aug  7 12:42:47 2017
 
 @author: Anders
+"""
+
+#!/usr/bin/env python3
+# -*- coding: utf-8 -*-
+"""
+Created on Sat Jul  8 11:52:37 2017
+
+@author: Anders
+
+CAUTION: This must start with a blank table! 
+        There is no protection against duplicates!
 """
 
 
@@ -13,19 +24,18 @@ import pandas as pd
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import relationship, aliased
 from sqlalchemy import create_engine, exists, func
-
+from cpd_db_setup2 import Variant, Read, Stats
 
 # SQL setup
-engine = create_engine('sqlite:///cpd2.db')
-Base = declarative_base(bind=engine)
+Base = declarative_base()
+#engine = create_engine('mysql+pymysql://root@localhost:3306/cpd', echo=False)
+engine = create_engine('sqlite:///CPD.db')
+Base.metadata.bind = engine
 DBSession = sessionmaker(bind=engine)
 session = DBSession()
 
-# Data import
-original_data = pd.read_excel("validation_full.xlsx")
-ash_data = pd.read_csv("fm.sv2_tsca.clincal_only.multirun.csv")
-CPDV000386 = pd.read_table("CPDV000386.tab")
-CPDV141537 = pd.read_table("CPDV141537.tab")
-CPDV151487 = pd.read_table("CPDV151487.tab")
-CPDV160726 = pd.read_table("CPDV160726.tab")
-heme_data = pd.read_csv("heme pos ctl.csv")
+
+
+
+
+variants = session.query(Read.var_id).filter_by(sample = 'CPDC151823').first()
