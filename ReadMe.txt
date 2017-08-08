@@ -36,14 +36,18 @@ CAUTION: as of now, all must start with clean tables
 5. load_reads.py
     - load in all reads from reads.csv
     - loop over reads, find the variant in the db
-    - add new read
+    - add to list of dicts
+    - bulk insert
 
 6. load_stats.py
     - loop over variants, find all relevant reads
     - calculate stats
     - link to variant
+    - add to list of dicts
+    - bulk insert for every sample
 
 Plotting
 
 1. box_plots.py
+    - for each
     

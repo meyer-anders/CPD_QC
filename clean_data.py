@@ -10,7 +10,9 @@ Drops and types columns
 """
 
 import pandas as pd
+import os
 
+os.chdir('/Users/Anders/Dropbox/Projects/CPD_QC/sql2/Data_imports')
 '''
 SEQUENCING DATA
 '''
@@ -68,7 +70,7 @@ categ = categ.drop_duplicates(subset = ['Pos', 'Alt', 'Chrom_without_chr'])
 '''
 DATA OUTPUT
 '''
-
+os.chdir('/Users/Anders/Dropbox/Projects/CPD_QC/sql2/Data_exports')
 variants.to_csv('variants.csv', index = False)
 reads.to_csv('reads.csv', index = False)
 categ.to_csv('categ.csv', index = False)
