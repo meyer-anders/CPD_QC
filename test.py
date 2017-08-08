@@ -1,20 +1,9 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 """
-Created on Mon Aug  7 12:42:47 2017
+Created on Mon Aug  7 21:14:04 2017
 
 @author: Anders
-"""
-
-#!/usr/bin/env python3
-# -*- coding: utf-8 -*-
-"""
-Created on Sat Jul  8 11:52:37 2017
-
-@author: Anders
-
-CAUTION: This must start with a blank table! 
-        There is no protection against duplicates!
 """
 
 
@@ -34,8 +23,19 @@ Base.metadata.bind = engine
 DBSession = sessionmaker(bind=engine)
 session = DBSession()
 
+def make_plot(x, df, cutoffs):
+    bins = pd.DataFrame(columns = ['lower', 'upper', 'y'])
+    for i in range(len(cutoffs)-1):
+        upper = cutoffs[i+1]
+        lower = cutoffs[i]
+        bins.set_value(i, 'upper', str(int(upper*100)))
+        bins.set_value(i, 'lower', str(int(lower*100)))
+        subset = df[df[x]< upper ]
+        subset = subset[subset[x]> lower]
+        y = subset['faf_cv']
+        bins.set_value(i, 'y', y)
+    return bins
 
-
-
-
-variants = session.query(Read.var_id).filter_by(sample = 'CPDC151823').first()
+q = session.query(Stats).filter_by(panel = 'bPPP')
+df = pd.read_sql_query(q.statement, engine)
+bins = make_plot('faf_mean', df, faf_cutoffs)

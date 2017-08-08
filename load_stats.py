@@ -37,43 +37,44 @@ for i in session.query(Read.sample).distinct():
 
 stats = []
 
+def load_stat(df, p, v, stats):
+    mean = df.faf.mean()
+    std = df.faf.std()
+    if len(df) > 1 and mean >0: 
+        new_stat = {'var_id' : v,
+                    'panel' : p,
+                    'sample' : s,
+                    'fdp_mean' : df.fdp.mean(),
+                    'faf_mean' : mean,
+                    'faf_sd' : std,
+                    'faf_cv' : std/mean,
+                    'num_runs' : len(df)}
+        stats.append(new_stat)
+    return stats
+
+n = 0
+t = len(samples)
 for s in samples:
     variants = session.query(Read.var_id).filter_by(sample = s).distinct().all()
     reads = session.query(Read).filter(Read.sample==s)
-    df2 = pd.read_sql_query(reads.statement, engine)
+    df3 = pd.read_sql_query(reads.statement, engine)
     for v in variants:
-        df = df2.loc[df2.var_id == v, :]
-        mean = df.faf.mean()
-        std = df.faf.std()
-        if len(df) > 1 and mean >0: # summary stats across panels
-            new_stat = {'var_id' : v.var_id,
-                        'panel' : 'all',
-                        'sample' : s,
-                        'fdp_mean' : df.fdp.mean(),
-                        'faf_mean' : mean,
-                        'faf_sd' : std,
-                        'faf_cv' : std/mean,
-                        'num_runs' : len(df)}
-            stats.append(new_stat)
-
+        df2 = df3.loc[df3.var_id == v, :]
+        # overall stats for all panels
+        stats = load_stat(df2, 'all', v.var_id, stats)
+        # stats for each panel
         for p in panels: # for each panel
-            df = df.loc[df.panel == p, :]
-            mean = df.faf.mean()
-            std = df.faf.std()
-            if len(df) > 1 and mean >0:
-                new_stat = {'var_id' : v.var_id,
-                            'panel' : p,
-                            'sample' : s,
-                            'fdp_mean' : df.fdp.mean(),
-                            'faf_mean' : mean,
-                            'faf_sd' : std,
-                            'faf_cv' : std/mean,
-                            'num_runs' : len(df)}
-                stats.append(new_stat)
+            df = df2.loc[df2.panel == p, :]
+            stats = load_stat(df, p, v.var_id, stats)
+            
+    # transfer to database
     for s in stats: session.add(Stats(**s))
     session.commit()
     stats = []
+    n += 1
+    print (n/t) # ghetto status bar
+    
 
-            
+          
 session.close()
 

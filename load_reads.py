@@ -31,6 +31,7 @@ nrows = len(reads)
 
 reads_list = []
 for r in range(nrows):
+    print (r/nrows)
     var = session.query(Variant.id).filter(
             Variant.position == int(reads.Pos.iloc[r]),
             Variant.nucleotide == reads.Alt.iloc[r],
@@ -50,6 +51,7 @@ for r in range(nrows):
             }
     reads_list.append(new_read)
 
+print('transfering')
 for r in reads_list: session.add(Read(**r))
 session.commit()
 

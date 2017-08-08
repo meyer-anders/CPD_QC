@@ -6,7 +6,8 @@ data representation:
 			- for each variant
 				- for each run
 					- plot as a series
-					
+
 	2. concordance between panels
-		- for each variant seen on multiple panels
-			- 
+		- pick solid as gold standard / x axis
+		- plot fafs against each other
+		- calculate R^2 value
