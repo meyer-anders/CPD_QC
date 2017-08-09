@@ -40,6 +40,7 @@ CAUTION: as of now, all must start with clean tables
     - bulk insert
 
 6. load_stats.py
+    - loop over samples and panels (including all panels combined)
     - loop over variants, find all relevant reads
     - calculate stats
     - link to variant
@@ -49,5 +50,6 @@ CAUTION: as of now, all must start with clean tables
 Plotting
 
 1. box_plots.py
-    - for each
+    - for each variant, panel, plot faf_cv vs mean faf and mean fdp
+
     
