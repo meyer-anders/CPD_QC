@@ -1,79 +1,72 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 """
-Created on Fri Aug  4 21:36:19 2017
+Created on Thu Aug 10 21:46:36 2017
 
 @author: Anders
-
-
-Drops and types columns
 """
-
 import pandas as pd
+import numpy as np
 import os
+from functions import parse_sample_name
 
-os.chdir('/Users/Anders/Dropbox/Projects/CPD_QC/sql2/Data_imports')
-'''
-SEQUENCING DATA
-'''
-fields = {'Pos': float, 'Alt': str, 'Gene_name': str, 'Chrom_without_chr': str,
-          'Effect': str, 'VariantType': str, 'FDP': float, 'FRD': float, 
-          'FAD': float,'Sample Sequencing Name': str}
-
-
-original_data = pd.read_excel("validation_full.xlsx", converters = fields, usecols = fields.keys())
-CPDV000386 = pd.read_table("CPDV000386.tab", dtype = fields, usecols = fields.keys())
-CPDV141537 = pd.read_table("CPDV141537.tab", dtype = fields, usecols = fields.keys())
-CPDV151487 = pd.read_table("CPDV151487.tab", dtype = fields, usecols = fields.keys())
-CPDV160726 = pd.read_table("CPDV160726.tab", dtype = fields, usecols = fields.keys())
-heme_data = pd.read_csv("heme pos ctl.csv", dtype = fields, usecols = fields.keys())
-ash_data = pd.read_csv("fm.sv2_tsca.clincal_only.multirun.csv", dtype = fields, usecols = fields.keys())
-
-dfs = [original_data,CPDV000386, CPDV141537, CPDV151487, CPDV160726, 
-       heme_data, ash_data]
-
-#combine data into one df
-final = pd.DataFrame()
-for df in dfs:
-   final = final.append(df, ignore_index = True)
-
-final = final.dropna(subset = ['Pos', 'Chrom_without_chr'])
-
-#drop duplicates
-reads = final[['Pos', 'Alt', 'Chrom_without_chr', 'FDP', 'FRD', 'FAD',
-               'Sample Sequencing Name']]
-reads = reads.drop_duplicates(subset = ['Pos', 'Alt', 'Chrom_without_chr', 
-                                        'Sample Sequencing Name'])
-
-
-variants = final[['Pos', 'Alt', 'Chrom_without_chr', 'Effect', 
-                  'VariantType', 'Gene_name']]
-
-variants = variants.drop_duplicates(subset = ['Pos', 'Alt', 'Chrom_without_chr'])
-
-#drop out nan from position, fdp, and fad
-reads = reads.dropna(subset = ['FDP', 'FAD', 'FRD'])
-
-
-'''
-REPORTING DATA
-'''
-fields = {'Pos': float, 'Alt': str, 'Chrom_without_chr': str,
-          'Categorization': str}
-
-categ = pd.read_table('ReportedVariants.tab', dtype = fields, 
-                      usecols = fields.keys())
-categ = categ.dropna(subset = ['Pos', 'Chrom_without_chr', 'Categorization'])
-categ = categ.drop_duplicates(subset = ['Pos', 'Alt', 'Chrom_without_chr'])
-
-
-'''
-DATA OUTPUT
-'''
 os.chdir('/Users/Anders/Dropbox/Projects/CPD_QC/sql2/Data_exports')
-variants.to_csv('variants.csv', index = False)
+reads = pd.read_csv('reads.csv')
+
+'''
+CLEAR OUT FAILED RUNS, FLAG OTHER POTENTIAL FAILED RUNS
+'''
+os.chdir('/Users/Anders/Dropbox/Projects/CPD_QC/sql2/Data_imports')
+c = {'Sample Sequencing Name': str, 'Panel_name': str }
+failed_runs = pd.read_table("failed seq QC data.tab", dtype = c,
+                            usecols = c.keys())
+failed_runs = failed_runs.dropna(subset = ['Sample Sequencing Name'])
+print('data loaded')
+
+runs_to_drop = set(failed_runs['Sample Sequencing Name'].drop_duplicates())
+runs = set(reads['Sample Sequencing Name'].drop_duplicates())
+runs_to_drop = list(runs_to_drop & runs)
+n = 0
+for r in runs_to_drop:
+    reads = reads[reads['Sample Sequencing Name'] != r]
+    n +=1
+    print('{} of {} rows deleted'.format(n, len(runs_to_drop)))
+
+# flag other potential failed runs
+reads.flagged = False
+repeat_runs = reads[reads.repeat == True].\
+    drop_duplicates(subset = ['Sample Sequencing Name'])
+
+n = 0
+for i, r in repeat_runs.iterrows():
+    reads.loc[(reads.chemistry == r.chemistry) &
+            (reads.chem_number == r.chem_number) &
+            (reads.repeat == False), 'flagged'] = True
+    n +=1
+    print('{} of {} rows flagged'.format(n, len(repeat_runs)))
+
+'''
+GET PANEL NAMES
+'''
+
+failed_runs = parse_sample_name(failed_runs)
+failed_runs = failed_runs.loc[:,['chemistry', 'chem_number', 'Panel_name']].drop_duplicates()
+
+reads.Panel_name = np.nan
+n = 0
+for i, r in failed_runs.iterrows():
+    reads.loc[(reads.chemistry == r.chemistry) &
+              (reads.chem_number == r.chem_number), 'Panel_name'] = r.Panel_name
+    n +=1
+    print('{} of {} rows named'.format(n, len(failed_runs)))
+
+panels_w_samples = reads.loc[:,['sample', 'chemistry', 'chem_number', 'Panel_name']].\
+                drop_duplicates()
+
+panels = panels_w_samples.loc[:,['chemistry', 'chem_number', 'Panel_name']].\
+                drop_duplicates()
+
+os.chdir('/Users/Anders/Dropbox/Projects/CPD_QC/sql2/Data_exports')
 reads.to_csv('reads.csv', index = False)
-categ.to_csv('categ.csv', index = False)
-
-
-    
+panels_w_samples.to_csv('panels_w_samples.csv', index = False)
+panels.to_csv('panels.csv', index = False)

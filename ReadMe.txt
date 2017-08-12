@@ -10,10 +10,33 @@ How database is created
 
 CAUTION: as of now, all must start with clean tables
 
-1. clean_data.py 
+1. get_reads 
+2. get_runs
+3. drop_failed_runs
+4. parse_runs
+5. assign_panel_names
+6. revise_panel_versions
+7. get variants
+8. get_categories
+9. assign_categories
+10. setup_database
+11. load_variants
+12. load_runs
+13. load_reads
+14. load_stats
+15. plot_cv_vs_faf
+16. plot_cv_vs_fdp
+17. plot_new_vs_old
+18. plot_ppp_vs_solid(v2?)
+29. plot_v_over_time
+ 
+
+
+
+1. collate_data.py 
     - loads original CPD exports 
     - drops un-needed columns
-    - makes two new DFs: reads and variants
+    - makes new DFs: reads and variants
     - drops duplicates from both
     - saves output as 'variants.csv' and 'reads.csv'
     - loads ReportedVariants.tab
@@ -21,6 +44,17 @@ CAUTION: as of now, all must start with clean tables
     - writes to 'categ.csv'
     *** will need to alter to enable *adding data to the db later
 
+2. clean_data.py
+    - loads reads.csv and failed_seq...tab
+    - removes failed runs from reads
+    - looks for sequencing names with 'A' which are repeats
+        - if any names are the same but without the 'A', flags them as
+            potential failed runs
+    - look in failed_runs for panel names
+        - take TSCA/etc + following number ('chemistry' + 'chem_number) and
+            correlate with the official panel name
+        - adds this panel name to reads
+        
 2. cpd_db_setup2.py
     - creates DB schema
 
