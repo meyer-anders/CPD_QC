@@ -15,6 +15,6 @@ categories = pd.read_csv('categories.csv')
 
 joined = reads.merge(categories, how = 'left',
                         on = ['chr', 'pos', 'alt'])
-joined = joined.drop_duplicates(subset = ['chr', 'pos', 'alt'])
+joined = joined.drop_duplicates(subset = ['chr', 'pos', 'alt', 'seq_name'])
 
 joined.to_csv('reads7.csv', index = False)

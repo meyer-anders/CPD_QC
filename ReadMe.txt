@@ -19,13 +19,11 @@ Cleaning read data:
     5 revise_panel_versions 6
     _ get_categories _
     6 assign_categories 7
+    7 set_keys 8
 
-
-10. setup_database
-11. load_variants
-12. load_runs
-13. load_reads
-14. load_stats
+Stats:
+    do_stats
+    
 15. plot_cv_vs_faf
 16. plot_cv_vs_fdp
 17. plot_new_vs_old
