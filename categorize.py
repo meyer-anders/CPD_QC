@@ -28,7 +28,6 @@ fields = {'Pos': int, 'Alt': str, 'Chrom_without_chr': str,
           'Categorization': str}
 categ = pd.read_csv('categ.csv', dtype = fields)
 
-
 nrows = len(categ)
 for r in range(nrows):
     q = session.query(Variant).filter(

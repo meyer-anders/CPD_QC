@@ -8,6 +8,7 @@ Created on Thu Aug 10 15:38:45 2017
 import numpy as np
 import pandas as pd
 
+
 def parse_sample_name(df):
     df.sample = np.nan
     df.chemistry = np.nan
@@ -15,25 +16,28 @@ def parse_sample_name(df):
     df.pal = np.nan
     df.seq = np.nan
     df.repeat = np.nan
-    names = df.drop_duplicates(subset = ['Sample Sequencing Name'])
+    df.year = np.nan
+    df.acc_num = np.nan
+    names = df.seq_name.drop_duplicates()
     n = 0
-    for i, r in names.iterrows():
-        sample_name = r["Sample Sequencing Name"]
+    t = len(names)
+    for r in names:
+        sample_name = r
         split = sample_name.split("-")
-        df.loc[df['Sample Sequencing Name'] == sample_name, \
-            'sample'] = split[0]
-        df.loc[df['Sample Sequencing Name'] == sample_name, \
-            'chemistry'] = split[-8]
-        df.loc[df['Sample Sequencing Name'] == sample_name, \
-            'chem_number'] = split[-7]
-        df.loc[df['Sample Sequencing Name'] == sample_name, \
-            'pal'] = split[-3]
-        df.loc[df['Sample Sequencing Name'] == sample_name, \
-            'seq'] = split[-1]
-        df.loc[df['Sample Sequencing Name'] == sample_name, \
-            'repeat'] = (split[1] == 'A')
+        mask = df.seq_name == sample_name
+        d = {'sample': str(split[0]),
+             'chemistry' : str(split[-8]),
+             'chem_number' : int(str(split[-7])),
+             'pal' : int(str(split[-3])),
+             'seq' : int(str(split[-1])),
+             'repeat' : (str(split[1]) == 'A'),
+             'year' : int(split[0][4:6]),
+             'acc_num' : int(split[0][6:])}
+        for k, v in d.items():
+            df.loc[mask, k] = v
+        
         n += 1
-        print('{} of {} rows parsed'.format(n, len(names)))
+        if n%100 ==0:print('{} of {} rows parsed'.format(n, t))
     
     
     #drop inapprpriate non-numeric entries

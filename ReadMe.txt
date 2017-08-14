@@ -8,17 +8,19 @@ Created on Sat Aug  5 11:03:33 2017
 
 How database is created
 
-CAUTION: as of now, all must start with clean tables
+CAUTION: as of now, process must start with clean tables
 
-1. get_reads 
-2. get_runs
-3. drop_failed_runs
-4. parse_runs
-5. assign_panel_names
-6. revise_panel_versions
-7. get variants
-8. get_categories
-9. assign_categories
+Cleaning read data:
+    _ get_reads 1
+    1 drop_failed_runs 2
+    2 parse_runs 3
+    3 assign_panel_names 4
+    4 drop_panels 5
+    5 revise_panel_versions 6
+    _ get_categories _
+    6 assign_categories 7
+
+
 10. setup_database
 11. load_variants
 12. load_runs
