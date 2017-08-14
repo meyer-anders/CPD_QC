@@ -11,7 +11,7 @@ import os
 from functions import parse_sample_name
 
 os.chdir('/Users/Anders/Dropbox/Projects/CPD_QC/sql2/Data_exports')
-
+print('parsing sample names')
 reads = pd.read_csv('reads2.csv')
 reads = parse_sample_name(reads)
 reads.to_csv('reads3.csv', index = False)

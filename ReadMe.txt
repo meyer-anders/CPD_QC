@@ -23,9 +23,9 @@ Cleaning read data:
 
 Stats:
     do_stats
+    box_plots
+    panel_correlation
     
-15. plot_cv_vs_faf
-16. plot_cv_vs_fdp
 17. plot_new_vs_old
 18. plot_ppp_vs_solid(v2?)
 29. plot_v_over_time

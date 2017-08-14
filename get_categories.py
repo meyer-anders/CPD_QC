@@ -9,6 +9,7 @@ Created on Sun Aug 13 19:16:38 2017
 import pandas as pd
 import os
 
+print('getting categories')
 os.chdir('/Users/Anders/Dropbox/Projects/CPD_QC/sql2/Data_imports')
 
 categ = pd.read_table('ReportedVariants.tab', 

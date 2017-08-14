@@ -10,6 +10,7 @@ import pandas as pd
 import numpy as np
 import os
 
+print('revising panel versions')
 os.chdir('/Users/Anders/Dropbox/Projects/CPD_QC/sql2/Data_exports')
 
 reads = pd.read_csv('reads5.csv')
@@ -35,6 +36,7 @@ panels_to_keep = ['FFPE_V1.1', 'HEME_V1.2', 'HEMEao_V1.3', 'PPP', 'Solid', 'bPPP
 panel_rename_dict = {'FFPE_V1.1' : ('Solid',1),
                      'HEME_V1.1' : ('Heme', 1),
                      'HEME_V1.2' : ('Heme', 0),
+                     'HEME_V2.0' : ('Heme', 0),
                      'HEMEao_V1.3' : ('Heme', 3)}
 
 for k, v in panel_rename_dict.items():

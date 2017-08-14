@@ -6,9 +6,13 @@ Created on Fri Aug 11 20:30:28 2017
 @author: Anders
 """
 
+
+
 import pandas as pd
 import os
 
+
+print ('importing data')
 
 os.chdir('/Users/Anders/Dropbox/Projects/CPD_QC/sql2/Data_imports')
 '''
@@ -43,6 +47,7 @@ for df in dfs:
    reads = reads.append(df, ignore_index = True)
 
 reads.rename(columns=rename, inplace = True)
+
 
 reads = reads.dropna(subset = ['pos', 'chr', 'fdp', 'fad', 'frd'])
 

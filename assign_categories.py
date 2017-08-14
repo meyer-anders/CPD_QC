@@ -8,7 +8,7 @@ Created on Sun Aug 13 20:36:30 2017
 
 import pandas as pd
 import os
-
+print('assigning categories')
 os.chdir('/Users/Anders/Dropbox/Projects/CPD_QC/sql2/Data_exports')
 reads = pd.read_csv('reads6.csv')
 categories = pd.read_csv('categories.csv')

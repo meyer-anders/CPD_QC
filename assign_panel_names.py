@@ -10,7 +10,7 @@ import pandas as pd
 import numpy as np
 import os
 
-
+print('assigning panel names')
 os.chdir('/Users/Anders/Dropbox/Projects/CPD_QC/sql2/Data_imports')
 panels = pd.read_csv('library preps.csv', header = None, usecols = [23,28],
                      names = ['panel_name', 'panel_id'])

@@ -8,7 +8,7 @@ Created on Sun Aug 13 22:47:24 2017
 
 import pandas as pd
 import os
-
+print('setting keys')
 os.chdir('/Users/Anders/Dropbox/Projects/CPD_QC/sql2/Data_exports')
 reads = pd.read_csv('reads7.csv')
 
