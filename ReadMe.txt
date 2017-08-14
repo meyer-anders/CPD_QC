@@ -6,9 +6,6 @@ Created on Sat Aug  5 11:03:33 2017
 @author: Anders
 """
 
-How database is created
-
-CAUTION: as of now, process must start with clean tables
 
 Cleaning read data:
     _ get_reads 1
@@ -26,10 +23,7 @@ Stats:
     box_plots
     panel_correlation
     
-17. plot_new_vs_old
-18. plot_ppp_vs_solid(v2?)
-29. plot_v_over_time
- 
+
 
 
 

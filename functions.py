@@ -117,10 +117,18 @@ def make_correlation(compare):
             hoverinfo = 'none',
             name = '{} fit'.format(y_label))
     traces.append(trace)
+#    
+#    annotation = go.Annotation(
+#                  text= 'R^2 = {:.2}, \nY = {:.2}X + {:.2}'.\
+#                          format(r_value**2, slope, intercept),
+#                  showarrow=False
+#                  )
 
-    xlab = dict(title = 'Mean FAF on {}'.format(x_label))
-    ylab = dict(title = 'Mean FAF on {}'.format(y_label))
-    title = 'Comparison of Panels'
-    layout = go.Layout(title = title , xaxis = xlab, yaxis = ylab)
+    xlab = dict(title = 'Mean FAF on {}'.format(x_label), range = [0,1.1])
+    ylab = dict(title = 'Mean FAF on {}'.format(y_label), range = [0,1.1])
+    title = 'Comparison of Panels  \nR^2 = {:.2}, Y = {:.2}X + {:.2}'.\
+                          format(r_value**2, slope, intercept)
+    layout = go.Layout(title = title , xaxis = xlab, yaxis = ylab,
+                       showlegend = False)# annotations=[annotation])
     fig = go.Figure(data=traces,layout=layout)
     py.image.save_as(fig, filename=filename, scale = 3)
