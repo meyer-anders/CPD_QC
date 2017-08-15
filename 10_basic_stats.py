@@ -1,14 +1,6 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 """
-Created on Mon Aug 14 14:47:47 2017
-
-@author: Anders
-"""
-
-#!/usr/bin/env python3
-# -*- coding: utf-8 -*-
-"""
 Created on Sun Aug 13 22:00:47 2017
 
 @author: Anders
@@ -41,11 +33,11 @@ for i, p in panels.iterrows():
     df2.reset_index(inplace=True)
     
     df2 = df2.merge(variants, how = 'left', on = 'var_id')
-    panel_summary.loc[i, 'panel'] = '{}_{}'.format(p.panel_name, p.panel_version)
-    panel_summary.loc[i, 'num_var'] = len(df['var_id'].drop_duplicates())
-    panel_summary.loc[i, 'num_samples'] = len(df['sample'].drop_duplicates())
     df2.to_csv(filename, index = False)
+    panel_summary.loc[i, 'panel'] = '{}_{}'.format(p.panel_name, p.panel_version)
+    panel_summary.loc[i, 'num_var'] = len(df['var_id'].copy().drop_duplicates())
+    panel_summary.loc[i, 'num_samples'] = len(df['sample'].copy().drop_duplicates())
+    
 
 os.chdir('/Users/Anders/Dropbox/Projects/CPD_QC/sql2/Summary_stats')
 panel_summary.to_csv('var_in_panels.csv', index = False)
-    

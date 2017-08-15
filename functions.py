@@ -7,11 +7,38 @@ Created on Thu Aug 10 15:38:45 2017
 """
 import os
 import pandas as pd
-import plotly
 import plotly.plotly as py
 import plotly.graph_objs as go
 import numpy as np
 from scipy import stats
+
+
+def get_overlap(a, b):
+    os.chdir('/Users/Anders/Dropbox/Projects/CPD_QC/sql2/Stats')
+    A = pd.read_csv('{}_stats.csv'.format(a))
+    B = pd.read_csv('{}_stats.csv'.format(b))
+    
+    
+    sjoined = A.merge(B, how ='inner', on = 'sample').\
+                    drop_duplicates(subset = 'sample')
+    vjoined = A.merge(B, how ='inner', on = 'var_id').\
+                    drop_duplicates(subset = 'var_id')
+    bjoined = A.merge(B, how ='inner', on = ['sample', 'var_id'])
+    panel_line = pd.Series({'panel_A':a, 'panel_B' : b, 
+                            'var_overlap': len(vjoined), 
+                            'sample_overlap' :len(sjoined),
+                            'both_overlap' : len(bjoined)})
+    return panel_line
+
+def compare(comparisons):
+    panel_summary = pd.DataFrame(columns = ['panel_A', 'panel_B', 'var_overlap', 
+                                        'sample_overlap', 'both_overlap', ])
+    for p in comparisons:
+        panel_summary = panel_summary.append(
+                get_overlap(p[0], p[1]), ignore_index = True)
+    
+    return panel_summary
+
 
 
 def parse_sample_name(df):
@@ -89,15 +116,16 @@ def make_box(x, df, cutoffs, panel_name, panel_version):
     py.image.save_as(fig, filename=filename, scale = 3)
     return
 
-def make_correlation(compare):
+def make_correlation(xvar, yvar):
+    os.chdir('/Users/Anders/Dropbox/Projects/CPD_QC/sql2/Stats')
+    X = pd.read_csv('{}_stats.csv'.format(xvar))
+    Y = pd.read_csv('{}_stats.csv'.format(yvar))
     
     os.chdir('/Users/Anders/Dropbox/Projects/CPD_QC/sql2/Plots')
-    x_label = compare['x'][0]
-    y_label = compare['y'][0]
-    filename = 'Correlation of {} and {}.png'.format(x_label, y_label)
+    filename = 'Correlation of {} and {}.png'.format(xvar, yvar)
     
-    joined = compare['x'][1].merge(compare['y'][1], how = 'inner', on = 'var_id')\
-                                [['var_id','faf_mean_x', 'faf_mean_y']]
+    joined = X.merge(Y, how = 'inner', 
+                    on = ['var_id', 'sample'])[['var_id','faf_mean_x', 'faf_mean_y']]
     x = joined.faf_mean_x
     y = joined.faf_mean_y
 
@@ -106,7 +134,7 @@ def make_correlation(compare):
                   x = x,
                   y = y,
                   mode='markers',
-                  name= y_label)
+                  name= yvar)
     traces.append(trace)
     slope, intercept, r_value, p_value, std_err = stats.linregress(x,y)
     line = slope*x+intercept
@@ -115,20 +143,21 @@ def make_correlation(compare):
             y = line,
             mode = 'lines',
             hoverinfo = 'none',
-            name = '{} fit'.format(y_label))
+            name = '{} fit'.format(yvar))
     traces.append(trace)
-#    
-#    annotation = go.Annotation(
-#                  text= 'R^2 = {:.2}, \nY = {:.2}X + {:.2}'.\
-#                          format(r_value**2, slope, intercept),
-#                  showarrow=False
-#                  )
 
-    xlab = dict(title = 'Mean FAF on {}'.format(x_label), range = [0,1.1])
-    ylab = dict(title = 'Mean FAF on {}'.format(y_label), range = [0,1.1])
+
+    xlab = dict(title = 'Mean FAF on {}'.format(xvar), range = [0,1.1])
+    ylab = dict(title = 'Mean FAF on {}'.format(yvar), range = [0,1.1])
     title = 'Comparison of Panels  \nR^2 = {:.2}, Y = {:.2}X + {:.2}'.\
                           format(r_value**2, slope, intercept)
     layout = go.Layout(title = title , xaxis = xlab, yaxis = ylab,
-                       showlegend = False)# annotations=[annotation])
+                       showlegend = False)
     fig = go.Figure(data=traces,layout=layout)
     py.image.save_as(fig, filename=filename, scale = 3)
+    return
+
+def make_comparisons(comparisons):
+    for p in comparisons:
+        make_correlation(p[0], p[1])
+    return

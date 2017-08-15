@@ -5,7 +5,16 @@ Created on Sat Aug  5 11:03:33 2017
 
 @author: Anders
 """
-
+data visualization
+    - stacked bars
+        avg cv, fdp, faf of each categ, vtype
+            stacked by panel
+    - stacked lines
+        cumulative avg cv with 95% confidence interval
+            stacked by panel
+        km style for simulation
+            risk of doubling or halving
+    
 
 Cleaning read data:
     _ get_reads 1
