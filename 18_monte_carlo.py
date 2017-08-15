@@ -4,6 +4,11 @@
 Created on Mon Aug 14 23:11:44 2017
 
 @author: Anders
+
+
+
+probably should change this to simulate the actual faf and put the filter on
+it when charting
 """
 import pandas as pd
 import os
@@ -14,7 +19,9 @@ import numpy as np
 
 os.chdir('/Users/Anders/Dropbox/Projects/CPD_QC/sql2/Stats')
 
-total = 100000
+print ('simulating reads')
+
+total = 10000
 clin_change = 0.3
 for file in os.listdir():
     if file.endswith(".csv"):
@@ -43,11 +50,11 @@ for file in os.listdir():
         sim = sim.reset_index(drop = True)
 
         for i in range(total): 
-            sim.loc[i, 'surviving'] = (nrows - sum(sim.s[:i]))/nrows
+            sim.loc[i, 'surviving'] = (total - sum(sim.s[:i]))/total
         
         os.chdir('/Users/Anders/Dropbox/Projects/CPD_QC/sql2/Simulations')
-        sim.to_csv('{}_{}_{}_simulation.csv'.format(panel_name, panel_version, 
-                   total), index = False)
+        sim.to_csv('{}_{}_simulation.csv'.format(panel_name, panel_version),
+                   index = False)
 
 
 

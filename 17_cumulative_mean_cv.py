@@ -38,13 +38,16 @@ for file in os.listdir():
         df = pd.read_csv(file)
         panel_name = df.panel_name[0]
         panel_version = df.panel_version[0]
+        
+        
         for c in cols:
             this_panel = []
             for s in sides:
                 trace = plot_cumulative_cv(df, c, s)
                 trace_dict[(c,s)].append(trace)
-                trace.name = s
-                this_panel.append(trace)
+                trace2 = trace.copy()
+                trace2['name'] = s
+                this_panel.append(trace2)
                 
             os.chdir('/Users/Anders/Dropbox/Projects/CPD_QC/sql2/Plots')
             xlab = dict(title = c)
