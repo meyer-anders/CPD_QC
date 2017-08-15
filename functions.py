@@ -12,6 +12,24 @@ import plotly.graph_objs as go
 import numpy as np
 from scipy import stats
 
+def plot_cumulative_cv(df, col, side):
+    df = df.dropna(subset =['faf_cv', col]).\
+        sort_values(by = col, ascending = False).\
+        reset_index(drop = True)
+    df['cum_avg'] = np.nan
+    df = df[[col, 'faf_cv', 'cum_avg']]
+    nrows = len(df)
+    if side == 'right':
+        for i in range(nrows):
+            df.loc[i, 'cum_avg'] = df.faf_cv[i:].mean()
+    else:
+        for i in range(nrows):
+            df.loc[i, 'cum_avg'] = df.faf_cv[:i].mean()
+    trace = go.Scatter(x = df[col],
+                       y = df.cum_avg,
+                       mode = 'line',
+                       name = '{} {}'.format(panel_name, panel_version))
+    return trace
 
 def get_overlap(a, b):
     os.chdir('/Users/Anders/Dropbox/Projects/CPD_QC/sql2/Stats')
@@ -95,10 +113,7 @@ def make_box(x, df, cutoffs, panel_name, panel_version):
     # load traces
     data = []
     for i in range(len(cutoffs)-1):
-        if cutoffs[1]<1:
-            name = "{:.2} - {:.2}".format(lowers[i], uppers[i])
-        else:
-            name = "{} - {}".format(lowers[i], uppers[i])
+        name = "{} - {}".format(lowers[i], uppers[i])
         trace = go.Box(
                     y = cvs[i],
                     name = name,
@@ -111,8 +126,7 @@ def make_box(x, df, cutoffs, panel_name, panel_version):
     layout = go.Layout(title = '{} v{}'.format(panel_name, panel_version), 
                        xaxis = xlab, yaxis = ylab)
     fig = go.Figure(data=data,layout=layout)
-#    plot_URL = py.plot(fig, filename = p +  ' ' + x, fileopt= 'overwrite',
-#                       sharing = 'secret', auto_open = False)
+
     py.image.save_as(fig, filename=filename, scale = 3)
     return
 
