@@ -13,8 +13,10 @@ import numpy as np
 from scipy import stats
 
 def plot_cumulative_cv(df, col, side):
+    panel_name = df.panel_name[0]
+    panel_version = df.panel_version[0]
     df = df.dropna(subset =['faf_cv', col]).\
-        sort_values(by = col, ascending = False).\
+        sort_values(by = col, ascending = True).\
         reset_index(drop = True)
     df['cum_avg'] = np.nan
     df = df[[col, 'faf_cv', 'cum_avg']]
@@ -124,7 +126,7 @@ def make_box(x, df, cutoffs, panel_name, panel_version):
     xlab = dict(title = x)
     ylab = dict(title = 'CV of FAF')
     layout = go.Layout(title = '{} v{}'.format(panel_name, panel_version), 
-                       xaxis = xlab, yaxis = ylab)
+                       xaxis = xlab, yaxis = ylab, showlegend=False)
     fig = go.Figure(data=data,layout=layout)
 
     py.image.save_as(fig, filename=filename, scale = 3)
