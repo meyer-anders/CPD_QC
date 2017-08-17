@@ -10,7 +10,8 @@ import pandas as pd
 import os
 print('dropping failed runs')
 
-os.chdir('/Users/Anders/Dropbox/Projects/CPD_QC/sql2/Data_imports')
+os.chdir('/Users/Anders/Dropbox/Projects/CPD_QC/files/Data_imports/failed_runs')
+
 c = {'Sample Sequencing Name': str, 'Panel_name': str }
 failed_runs = pd.read_table("failed seq QC data.tab", dtype = c,
                             usecols = c.keys())

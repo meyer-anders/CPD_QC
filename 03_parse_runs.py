@@ -10,7 +10,7 @@ import pandas as pd
 import os
 from functions import parse_sample_name
 
-os.chdir('/Users/Anders/Dropbox/Projects/CPD_QC/sql2/Data_exports')
+os.chdir('/Users/Anders/Dropbox/Projects/CPD_QC/files/Data_exports')
 print('parsing sample names')
 reads = pd.read_csv('reads2.csv')
 reads = parse_sample_name(reads)

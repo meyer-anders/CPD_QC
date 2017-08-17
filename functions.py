@@ -12,6 +12,29 @@ import plotly.graph_objs as go
 import numpy as np
 from scipy import stats
 
+
+def concat_data(directory, fields):
+    '''
+    Reads in all data files in the directory and combines them along the fields
+    and with the data types specified in 'fields'. Returns concatenated DF.
+    Crudely handles errors.
+    '''
+    
+    os.chdir(directory)
+    dfs = []
+    for file in os.listdir():
+        try:
+            if file.endswith(".csv"):
+                dfs.append(pd.read_csv(file, dtype = fields, usecols = fields.keys()))
+            if file.endswith(".tab"):
+                dfs.append(pd.read_table(file, dtype = fields, usecols = fields.keys()))
+            if file.endswith(".xls") or file.endswith(".xlsx"):
+                dfs.append(pd.read_excel(file, converters = fields, usecols = fields.keys()))
+        except:
+            print('error loading {}'.format(file))
+    return pd.concat(dfs, ignore_index = True)
+        
+        
 def plot_cumulative_cv(df, col, side):
     panel_name = df.panel_name[0]
     panel_version = df.panel_version[0]
@@ -61,23 +84,13 @@ def compare(comparisons):
 
 
 
-def parse_sample_name(df):
-    df.sample = np.nan
-    df.chemistry = np.nan
-    df.chem_number = np.nan
-    df.pal = np.nan
-    df.seq = np.nan
-    df.repeat = np.nan
-    df.year = np.nan
-    df.acc_num = np.nan
-    names = df.seq_name.drop_duplicates()
-    n = 0
-    t = len(names)
+def parse_sample_name(df): 
+    names = df.seq_name.copy().drop_duplicates()    
+    dicts = []
     for r in names:
-        sample_name = r
-        split = sample_name.split("-")
-        mask = df.seq_name == sample_name
-        d = {'sample': str(split[0]),
+        split = r.split("-")
+        d = {'seq_name' : r,
+            'sample': str(split[0]),
              'chemistry' : str(split[-8]),
              'chem_number' : int(str(split[-7])),
              'pal' : int(str(split[-3])),
@@ -85,11 +98,13 @@ def parse_sample_name(df):
              'repeat' : (str(split[1]) == 'A'),
              'year' : int(split[0][4:6]),
              'acc_num' : int(split[0][6:])}
-        for k, v in d.items():
-            df.loc[mask, k] = v
+        dicts.append(d)        
+    
+    temp_df = pd.DataFrame()
+    temp_df = temp_df.from_dict(dicts)
+    return df.merge(temp_df, how = 'left', on = 'seq_name')
         
-        n += 1
-        if n%500 ==0:print('{} of {} rows parsed'.format(n, t))
+        
     
     
     #drop inapprpriate non-numeric entries
