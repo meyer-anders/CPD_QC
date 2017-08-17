@@ -27,10 +27,11 @@ categs= sorted(list(reads.categorization.copy().dropna().drop_duplicates()))
 os.chdir('/Users/Anders/Dropbox/Projects/CPD_QC/sql2/Stats')
 
 
-vtraces = []
-ctraces = []
+
 for file in os.listdir():
     if file.endswith(".csv"):
+        vtraces = []
+        ctraces = []
         os.chdir('/Users/Anders/Dropbox/Projects/CPD_QC/sql2/Stats')
         df = pd.read_csv(file)
         panel_name = df.panel_name[0]
